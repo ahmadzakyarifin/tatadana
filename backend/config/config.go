@@ -10,14 +10,15 @@ import (
 
 
 type Config struct {
-	DB_USER   string
-	DB_PASS   string
-	DB_NAME   string
-	DB_HOST   string
-	DB_PORT   string
-	JWTSECRET string
-	ACCESS_TOKEN_EXPIRE int
-	REFRESH_TOKEN_EXPIRE int	
+	DBUser   string
+	DBPass   string
+	DBName   string
+	DBHost   string
+	DBPort   string
+	JWTSecret string
+	AccessTokenExpire int
+	RefreshTokenExpire int
+	AppEnv string	
 }
 
 func LoadConfig() *Config {
@@ -26,14 +27,15 @@ func LoadConfig() *Config {
 	}
 
 	var cfg Config
-	cfg.DB_USER = os.Getenv("DB_USER")
-	cfg.DB_PASS = os.Getenv("DB_PASS")
-	cfg.DB_NAME = os.Getenv("DB_NAME")
-	cfg.DB_HOST = os.Getenv("DB_HOST")
-	cfg.DB_PORT = os.Getenv("DB_PORT")
-	cfg.JWTSECRET = os.Getenv("JWTSECRET")
-	cfg.ACCESS_TOKEN_EXPIRE, _ = strconv.Atoi(os.Getenv("ACCESS_TOKEN_EXPIRE"))
-	cfg.REFRESH_TOKEN_EXPIRE, _ = strconv.Atoi(os.Getenv("REFRESH_TOKEN_EXPIRE"))
+	cfg.DBUser = os.Getenv("DB_USER")
+	cfg.DBPass = os.Getenv("DB_PASS")
+	cfg.DBName = os.Getenv("DB_NAME")
+	cfg.DBHost = os.Getenv("DB_HOST")
+	cfg.DBPort = os.Getenv("DB_PORT")
+	cfg.JWTSecret = os.Getenv("JWTSECRET")
+	cfg.AccessTokenExpire, _ = strconv.Atoi(os.Getenv("ACCESS_TOKEN_EXPIRE"))
+	cfg.RefreshTokenExpire, _ = strconv.Atoi(os.Getenv("REFRESH_TOKEN_EXPIRE"))
+	cfg.AppEnv = os.Getenv("APP_ENV")
 
 	return &cfg
 }
