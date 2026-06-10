@@ -1,0 +1,47 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: tatadana_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS:-root}
+      MYSQL_DATABASE: ${DB_NAME:-tatadana}
+      MYSQL_USER: ${DB_USER:-tatadana_user}
+      MYSQL_PASSWORD: ${DB_PASS:-tatadana_password}
+    ports:
+      - "${DB_EXTERNAL_PORT:-13306}:${DB_PORT:-3306}"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    image: gomicro/goose:latest
+    container_name: tatadana_migrate
+    volumes:
+      - ./backend/database/migrations:/migrations
+    environment:
+      GOOSE_DRIVER: mysql
+      GOOSE_DBSTRING: "${DB_USER:-tatadana_user}:${DB_PASS:-tatadana_password}@tcp(db:3306)/${DB_NAME:-tatadana}?parseTime=true"
+    command: ["goose", "up"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tatadana_app
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  db_data:
